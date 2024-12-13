@@ -20,17 +20,23 @@ const tooltip = d3.select("body").append("div")
     .style("border-radius", "5px")
     .style("padding", "10px")
     .style("box-shadow", "0px 0px 10px rgba(0, 0, 0, 0.1)")
-    .style("pointer-events", "none");  // Prevent tooltip from interfering with mouse events
+    .style("pointer-events", "none");
+
+// Create audio element for preview
+const audio = new Audio();
+audio.style.display = "none";  // Hide audio element
+
+// Variable to track the selected dot (for toggle functionality)
+let selectedDot = null;
 
 // Load CSV data
-d3.csv("data/enao-genres.csv").then(function(data) {
-
-    // Parse numeric values
+d3.csv("data/enao-genres.csv").then(data => {
+    // Parse numeric values and set default color
     data.forEach(d => {
         d.top_pixel = +d.top_pixel;
         d.left_pixel = +d.left_pixel;
         d.font_size = +d.font_size;
-        d.color = d.color || "#69b3a2"; // Default color
+        d.color = d.color || "#69b3a2"; // Default color if not specified
     });
 
     // Set scales
@@ -53,7 +59,7 @@ d3.csv("data/enao-genres.csv").then(function(data) {
         svg.selectAll("*").remove();
 
         // Create circles for scatter plot
-        svg.append("g")
+        const circles = svg.append("g")
             .selectAll(".dot")
             .data(data)
             .enter().append("circle")
@@ -73,21 +79,28 @@ d3.csv("data/enao-genres.csv").then(function(data) {
                     `)
                     .style("top", `${event.pageY + 5}px`)
                     .style("left", `${event.pageX + 5}px`)
-                    .style("background-color", d.color);  // Tooltip background matches the point color
+                    .style("background-color", d.color);
             })
-            .on("mouseout", function() {
-                tooltip.style("visibility", "hidden");  // Hide tooltip on mouseout
-            })
-            .on("click", function() {
-                d3.select(this).classed("selected", !d3.select(this).classed("selected"));
+            .on("mouseout", () => tooltip.style("visibility", "hidden"))
+            .on("click", function(event, d) {
+                // Handle dot click events
+                if (selectedDot === d) {
+                    audio.pause();  // Stop audio if same dot is clicked again
+                    selectedDot = null;  // Reset selected dot
+                    d3.select(this).classed("selected", false);  // Remove selection
+                } else {
+                    if (d.preview_url) {
+                        audio.src = d.preview_url;  // Set audio source
+                        audio.play();  // Play the audio
+                    }
+                    selectedDot = d;  // Update selected dot
+                    d3.selectAll(".dot").classed("selected", false);  // Remove selection from all dots
+                    d3.select(this).classed("selected", true);  // Mark current dot as selected
+                }
             });
 
         // Add x-axis without lines, ticks, and numbers
-        const xAxis = d3.axisBottom(x)
-            .ticks(5)
-            .tickSize(0)
-            .tickFormat(() => ""); 
-
+        const xAxis = d3.axisBottom(x).ticks(5).tickSize(0).tickFormat(() => "");
         svg.append("g")
             .attr("class", "x axis")
             .attr("transform", `translate(0, ${height})`)
@@ -104,11 +117,7 @@ d3.csv("data/enao-genres.csv").then(function(data) {
             .text("← Denser & Atmospheric, Spikier & Bouncier →");
 
         // Add y-axis without lines, ticks, and numbers
-        const yAxis = d3.axisLeft(y)
-            .ticks(5)
-            .tickSize(0)
-            .tickFormat(() => "");
-
+        const yAxis = d3.axisLeft(y).ticks(5).tickSize(0).tickFormat(() => "");
         svg.append("g")
             .attr("class", "y axis")
             .call(yAxis)
@@ -129,6 +138,4 @@ d3.csv("data/enao-genres.csv").then(function(data) {
 });
 
 // Window resize event for responsiveness
-window.addEventListener("resize", function() {
-    location.reload();  // Reload to adapt layout
-});
+window.addEventListener("resize", () => location.reload());  // Reload to adapt layout
