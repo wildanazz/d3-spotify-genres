@@ -11,6 +11,7 @@
             margin: 0;
             height: 100vh;
             display: flex;
+            flex-direction: column;
             justify-content: center;
             align-items: center;
             background-color: #f4f4f4;
@@ -22,7 +23,7 @@
         /* Container for the scatter plot */
         #scatterplot {
             width: 100%;
-            height: 100%;
+            height: 80vh; /* Adjust height for smaller screens */
             display: flex;
             justify-content: center;
             align-items: center;
@@ -106,6 +107,7 @@
             font-size: 14px;
             border-radius: 5px;
             border: 1px solid #ccc;
+            width: 150px;
         }
     
         #clear-button {
@@ -152,11 +154,19 @@
             }
     
             #genre-search {
-                width: 150px;
+                width: 200px;
             }
         }
     
         @media (max-width: 480px) {
+            body {
+                padding: 5px;
+            }
+    
+            #scatterplot {
+                height: 70vh; /* Reduce the plot height */
+            }
+    
             .tooltip {
                 font-size: 10px;
                 padding: 5px;
@@ -166,22 +176,19 @@
                 r: 4;
             }
     
-            #scatterplot {
-                height: 80vh;
-            }
-    
             #controls {
                 flex-direction: column;
                 align-items: flex-start;
                 gap: 0.5em;
+                width: 100%; /* Ensure controls fit screen width */
             }
     
             #genre-search {
-                width: 100%;
+                width: 100%; /* Make search input full width */
             }
     
             #clear-button {
-                width: 100%;
+                width: 100%; /* Make button full width */
             }
         }
     </style>
