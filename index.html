@@ -14,7 +14,7 @@
             justify-content: center;
             align-items: center;
             background-color: #f4f4f4;
-            font-family: 'Arial', sans-serif;
+            font-family: Arial, sans-serif;
             overflow: hidden;
         }
 
@@ -26,9 +26,6 @@
             justify-content: center;
             align-items: center;
             position: relative;
-            background: linear-gradient(135deg, #E0E0E0, #f7f7f7);
-            border-radius: 10px;
-            box-shadow: 0 4px 15px rgba(0, 0, 0, 0.1);
         }
 
         /* Title Styling */
@@ -36,11 +33,10 @@
             position: absolute;
             top: 10px;
             left: 10px;
-            font-size: 28px;
+            font-size: 24px;
             font-weight: bold;
             color: #333;
             z-index: 1;
-            text-shadow: 1px 1px 3px rgba(0, 0, 0, 0.2);
         }
 
         /* "Made with love" styling */
@@ -64,8 +60,6 @@
             visibility: hidden;
             font-size: 14px;
             pointer-events: none;
-            transition: opacity 0.2s ease-in-out;
-            opacity: 0;
             z-index: 2;
         }
 
@@ -74,18 +68,12 @@
             stroke-width: 2;
             opacity: 0.7;
             cursor: pointer;
-            transition: transform 0.3s ease, opacity 0.3s ease;
+            transition: transform 0.3s ease;
         }
 
         .dot.selected {
             stroke: #ff4500;
             stroke-width: 3;
-        }
-
-        /* Hover effect for the dots */
-        .dot:hover {
-            opacity: 1;
-            transform: scale(1.1);
         }
 
         /* Container for the search and toggle */
@@ -97,26 +85,21 @@
             display: flex;
             align-items: center;
             gap: 1em;
-            font-family: 'Arial', sans-serif;
+            font-family: Arial, sans-serif;
             font-size: 14px;
-            background-color: rgba(255, 255, 255, 0.9); /* Slightly lighter background */
-            padding: 12px;
+            background-color: rgba(255, 255, 255, 0.8); /* Slightly lighter background */
+            padding: 10px;
             border-radius: 5px;
-            box-shadow: 0 0 15px rgba(0, 0, 0, 0.15);
-            z-index: 1;
+            box-shadow: 0 0 10px rgba(0, 0, 0, 0.2);
+            z-index: 1; /* Ensure controls are on top of the plot */
         }
 
         /* Styling for the search input and button */
         #genre-search {
-            padding: 8px;
+            padding: 6px;
             font-size: 14px;
             border-radius: 5px;
             border: 1px solid #ccc;
-            transition: border-color 0.3s ease;
-        }
-
-        #genre-search:focus {
-            border-color: #ff4500;
         }
 
         #clear-button {
