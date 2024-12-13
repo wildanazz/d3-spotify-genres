@@ -1,5 +1,5 @@
 // Set up dimensions and margins
-const margin = { top: 20, right: 40, bottom: 60, left: 60 };
+const margin = { top: 20, right: 40, bottom: 60, left: 80 }; 
 const width = window.innerWidth - margin.left - margin.right;  
 const height = window.innerHeight - margin.top - margin.bottom;
 
@@ -10,10 +10,22 @@ const svg = d3.select("#scatterplot").append("svg")
     .append("g")
     .attr("transform", `translate(${margin.left},${margin.top})`);
 
-// Load the CSV data
+// Set up tooltip
+const tooltip = d3.select("body").append("div")
+    .attr("id", "tooltip")
+    .style("position", "absolute")
+    .style("visibility", "hidden")
+    .style("background-color", "#f9f9f9")
+    .style("border", "1px solid #ccc")
+    .style("border-radius", "5px")
+    .style("padding", "10px")
+    .style("box-shadow", "0px 0px 10px rgba(0, 0, 0, 0.1)")
+    .style("pointer-events", "none");  // Prevent tooltip from interfering with mouse events
+
+// Load CSV data
 d3.csv("data/enao-genres.csv").then(function(data) {
 
-    // Parse numeric values from strings
+    // Parse numeric values
     data.forEach(d => {
         d.top_pixel = +d.top_pixel;
         d.left_pixel = +d.left_pixel;
@@ -21,33 +33,22 @@ d3.csv("data/enao-genres.csv").then(function(data) {
         d.color = d.color || "#69b3a2"; // Default color
     });
 
-    // Set scales for x, y, and font_size (radius)
+    // Set scales
     const x = d3.scaleLinear()
-        .domain([d3.min(data, d => d.left_pixel) - 150, d3.max(data, d => d.left_pixel) + 150])
+        .domain([d3.min(data, d => d.left_pixel) - 10, d3.max(data, d => d.left_pixel) + 10])
         .range([0, width]);
 
     const y = d3.scaleLinear()
-        .domain([d3.min(data, d => d.top_pixel) - 1500, d3.max(data, d => d.top_pixel) + 1500])
-        .range([0, height]);
+        .domain([d3.min(data, d => d.top_pixel) - 10, d3.max(data, d => d.top_pixel) + 10])
+        .range([0, height]);  // Inverted range for y-axis
 
-    // Scale font_size to circle radius (use sqrt scale)
+    // Scale font_size to circle radius
     const radius = d3.scaleSqrt()
         .domain([d3.min(data, d => d.font_size), d3.max(data, d => d.font_size)])
         .range([4, 16]);  // Circle sizes
 
-    // Create density function for contours
-    const density = d3.contourDensity()
-        .x(d => x(d.left_pixel))
-        .y(d => y(d.top_pixel))
-        .size([width, height])
-        .thresholds(30)
-        .bandwidth(40);
-
-    // Create color scale for contours
-    const color = d3.scaleLinear().domain(d3.extent(density(data), d => d.value)).range(["#06D6A0", "#EF476F"]);
-
-    // Function to create the chart (scatter plot + contours)
-    function drawChart(w_masks) {
+    // Draw the chart
+    function drawChart() {
         // Clear previous chart elements
         svg.selectAll("*").remove();
 
@@ -62,67 +63,72 @@ d3.csv("data/enao-genres.csv").then(function(data) {
             .attr("r", d => radius(d.font_size))
             .attr("fill", d => d.color)
             .on("mouseover", function(event, d) {
-                const tooltip = d3.select("#tooltip");
+                // Display dynamic tooltip content
                 tooltip.style("visibility", "visible")
-                    .html(`<strong>Genre:</strong> ${d.genre_name}<br>
-                           <strong>Preview:</strong> <a href="${d.preview_url}" target="_blank">Listen</a>`)
+                    .html(`
+                        <strong>Genre:</strong> ${d.genre_name}<br>
+                        <strong>Font Size:</strong> ${d.font_size}px<br>
+                        <strong>Color:</strong> ${d.color}<br>
+                        <strong>Preview:</strong> <a href="${d.preview_url}" target="_blank">Listen</a>
+                    `)
                     .style("top", `${event.pageY + 5}px`)
-                    .style("left", `${event.pageX + 5}px`);
+                    .style("left", `${event.pageX + 5}px`)
+                    .style("background-color", d.color);  // Tooltip background matches the point color
             })
             .on("mouseout", function() {
-                d3.select("#tooltip").style("visibility", "hidden");
+                tooltip.style("visibility", "hidden");  // Hide tooltip on mouseout
             })
-            .on("click", function(event, d) {
-                // Toggle selected state on click
+            .on("click", function() {
                 d3.select(this).classed("selected", !d3.select(this).classed("selected"));
             });
 
-        // Generate contours
-        const contours = density(data);
+        // Add x-axis without lines, ticks, and numbers
+        const xAxis = d3.axisBottom(x)
+            .ticks(5)
+            .tickSize(0)
+            .tickFormat(() => ""); 
 
-        // Create contour paths with optional clipping mask
-        const contourGroup = svg.append("g")
-            .selectAll(".contour")
-            .data(contours)
-            .enter().append("path")
-            .attr("class", "contour")
-            .attr("d", d3.geoPath())
-            .attr("stroke-width", 2)
-            .attr("stroke", d => color(d.value))
-            .attr("stroke-linejoin", "round")
-            .style("fill", d => {
-                return w_masks ? `url(#mask${d.ix})` : color(d.value).replace(")", ", 0.3)");  // Apply mask or fill color
-            });
+        svg.append("g")
+            .attr("class", "x axis")
+            .attr("transform", `translate(0, ${height})`)
+            .call(xAxis)
+            .selectAll(".domain")  // Remove the axis line
+            .remove();
 
-        if (w_masks) {
-            // Create clipping masks for contours
-            const masks = svg.append("defs")
-                .selectAll("mask")
-                .data(contours)
-                .enter().append("mask")
-                .attr("id", (d, i) => "mask" + i);
+        // Add x-axis label
+        svg.append("text")
+            .attr("class", "axis-label")
+            .attr("x", width / 2)
+            .attr("y", height + margin.bottom - 10)
+            .style("text-anchor", "middle")
+            .text("← Denser & Atmospheric, Spikier & Bouncier →");
 
-            masks.append("path")
-                .attr("d", d3.geoPath())
-                .style("fill", "white");
+        // Add y-axis without lines, ticks, and numbers
+        const yAxis = d3.axisLeft(y)
+            .ticks(5)
+            .tickSize(0)
+            .tickFormat(() => "");
 
-            masks.append("path")
-                .attr("d", d => d3.geoPath())
-                .style("fill", "black");
-        }
+        svg.append("g")
+            .attr("class", "y axis")
+            .call(yAxis)
+            .selectAll(".domain")  // Remove the axis line
+            .remove();
+
+        // Add y-axis label
+        svg.append("text")
+            .attr("class", "axis-label")
+            .attr("transform", "rotate(-90)")
+            .attr("x", -height / 2)
+            .attr("y", -margin.left + 20)
+            .style("text-anchor", "middle")
+            .text("← Organic, Mechanical & Electric →");
     }
 
-    // Initial chart render with clipping masks enabled (checkbox default state is checked)
-    drawChart(true);
-
-    // Event listener for checkbox to toggle `w_masks`
-    document.getElementById("toggle-mask").addEventListener("change", function() {
-        drawChart(this.checked); // Re-draw chart based on checkbox state
-    });
-
+    drawChart();
 });
 
-// Window resize event to make the chart responsive
+// Window resize event for responsiveness
 window.addEventListener("resize", function() {
-    location.reload(); // Reload the page on resize to adapt the layout
+    location.reload();  // Reload to adapt layout
 });
