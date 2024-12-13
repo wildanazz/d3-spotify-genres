@@ -3,7 +3,7 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>All Spotify Genres</title>
+    <title>ENAO</title>
     <script src="https://d3js.org/d3.v7.min.js"></script>
     <style>
         /* Basic Reset and Full Screen Layout */
@@ -26,6 +26,16 @@
             justify-content: center;
             align-items: center;
             position: relative;
+        }
+
+        /* Title Styling */
+        #title {
+            position: absolute;
+            top: 10px;
+            left: 10px;
+            font-size: 24px;
+            font-weight: bold;
+            color: #333;
         }
 
         /* Tooltip styling */
@@ -53,11 +63,11 @@
             stroke-width: 3;
         }
 
-        /* Checkbox form styling */
+        /* Checkbox form styling - Positioned at the bottom right */
         form {
             position: absolute;
-            top: 10px;
-            left: 10px;
+            bottom: 10px;
+            right: 10px;
             font-family: Arial, sans-serif;
             font-size: 14px;
             background-color: white;
@@ -99,6 +109,7 @@
     </style>
 </head>
 <body>
+    <div id="title">6292 Spotify Genres</div>
     <div id="scatterplot"></div>
     <div class="tooltip" id="tooltip"></div>
     <form>
