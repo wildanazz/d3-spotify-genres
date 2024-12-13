@@ -3,7 +3,7 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>ENAO - Every Spotify Genre</title>
+    <title>Every Noise at Once</title>
     <script src="https://d3js.org/d3.v7.min.js"></script>
     <style>
         /* Basic Reset and Full Screen Layout */
@@ -36,16 +36,18 @@
             font-size: 24px;
             font-weight: bold;
             color: #333;
+            z-index: 1;
         }
 
         /* "Made with love" styling */
         #credit {
             position: absolute;
-            top: 40px; /* Adjusted for spacing under the title */
+            top: 40px;
             left: 10px;
             font-size: 14px;
             color: #888;
             font-style: italic;
+            z-index: 1;
         }
 
         /* Tooltip styling */
@@ -58,6 +60,7 @@
             visibility: hidden;
             font-size: 14px;
             pointer-events: none;
+            z-index: 2;
         }
 
         /* Dot styling */
@@ -81,13 +84,44 @@
             transform: translateX(-50%);
             display: flex;
             align-items: center;
-            gap: 1em; /* Space between input and checkbox */
+            gap: 1em;
             font-family: Arial, sans-serif;
             font-size: 14px;
-            background-color: white;
+            background-color: rgba(255, 255, 255, 0.8); /* Slightly lighter background */
             padding: 10px;
             border-radius: 5px;
             box-shadow: 0 0 10px rgba(0, 0, 0, 0.2);
+            z-index: 1; /* Ensure controls are on top of the plot */
+        }
+
+        /* Styling for the search input and button */
+        #genre-search {
+            padding: 6px;
+            font-size: 14px;
+            border-radius: 5px;
+            border: 1px solid #ccc;
+        }
+
+        #clear-button {
+            padding: 6px 12px;
+            font-size: 14px;
+            border: 1px solid #ccc;
+            background-color: #f4f4f4;
+            border-radius: 5px;
+            cursor: pointer;
+            transition: background-color 0.3s ease;
+        }
+
+        #clear-button:hover {
+            background-color: #e0e0e0;
+        }
+
+        /* Small note under the controls */
+        #audio-note {
+            font-size: 12px;
+            color: #555;
+            margin: 0;
+            font-style: italic;
         }
 
         /* Responsive styling */
@@ -104,6 +138,15 @@
             .dot {
                 r: 5;
             }
+
+            #controls {
+                padding: 8px;
+                gap: 0.8em;
+            }
+
+            #genre-search {
+                width: 150px;
+            }
         }
 
         @media (max-width: 480px) {
@@ -117,7 +160,21 @@
             }
 
             #scatterplot {
-                height: 80vh; /* Reduce height on very small screens */
+                height: 80vh;
+            }
+
+            #controls {
+                flex-direction: column;
+                align-items: flex-start;
+                gap: 0.5em;
+            }
+
+            #genre-search {
+                width: 100%;
+            }
+
+            #clear-button {
+                width: 100%;
             }
         }
     </style>
@@ -137,6 +194,7 @@
         </form>
         <input type="text" id="genre-search" placeholder="Search for a genre..." autocomplete="off">
         <button id="clear-button">Clear</button>
+        <p id="audio-note">Tap dot for audio preview</p>
     </div>
 
     <script src="d3.js"></script>
