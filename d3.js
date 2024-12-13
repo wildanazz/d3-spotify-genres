@@ -61,14 +61,17 @@ function updateChartDimensions() {
             .range(["#06D6A0", "#EF476F"]);
 
         // Draw the chart
-        function drawChart(w_masks) {
+        function drawChart(w_masks, searchTerm = "") {
             // Clear previous chart elements
             svg.selectAll("*").remove();
 
+            // Filter data based on search term
+            const filteredData = searchTerm ? data.filter(d => d.genre_name.toLowerCase().includes(searchTerm.toLowerCase())) : data;
+
             // Create circles for scatter plot
-            svg.append("g")
+            const dots = svg.append("g")
                 .selectAll(".dot")
-                .data(data)
+                .data(filteredData)
                 .enter().append("circle")
                 .attr("class", "dot")
                 .attr("cx", d => x(d.left_pixel))
@@ -100,7 +103,7 @@ function updateChartDimensions() {
                 });
 
             // Generate contours
-            const contours = density(data);
+            const contours = density(filteredData);
 
             // Create contour paths with optional clipping mask
             if (w_masks) {
@@ -156,7 +159,22 @@ function updateChartDimensions() {
         // Event listener for the mask toggle
         const maskToggle = document.getElementById("toggle-mask");
         maskToggle.addEventListener("change", (event) => {
-            drawChart(event.target.checked);
+            drawChart(event.target.checked, document.getElementById("genre-search").value);
+        });
+
+        // Event listener for search button
+        const searchButton = document.getElementById("search-button");
+        searchButton.addEventListener("click", () => {
+            const searchTerm = document.getElementById("genre-search").value;
+            drawChart(maskToggle.checked, searchTerm);
+        });
+
+        // Event listener for pressing Enter key in search field
+        document.getElementById("genre-search").addEventListener("keydown", (event) => {
+            if (event.key === "Enter") {
+                const searchTerm = event.target.value;
+                drawChart(maskToggle.checked, searchTerm);
+            }
         });
 
         // Initial chart render with mask enabled

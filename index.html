@@ -63,11 +63,15 @@
             stroke-width: 3;
         }
 
-        /* Checkbox form styling - Positioned at the bottom right */
-        form {
+        /* Container for the search and toggle */
+        #controls {
             position: absolute;
-            bottom: 10px;
-            right: 10px;
+            top: 10px;
+            left: 50%;
+            transform: translateX(-50%);
+            display: flex;
+            align-items: center;
+            gap: 1em; /* Space between input and checkbox */
             font-family: Arial, sans-serif;
             font-size: 14px;
             background-color: white;
@@ -112,12 +116,18 @@
     <div id="title">6292 Spotify Genres</div>
     <div id="scatterplot"></div>
     <div class="tooltip" id="tooltip"></div>
-    <form>
-        <label style="display: flex; align-items: center;">
-            <input type="checkbox" id="toggle-mask" style="margin-right: 0.4em;">
-            <span>Enable Mask</span>
-        </label>
-    </form>
+    
+    <div id="controls">
+        <form>
+            <label style="display: flex; align-items: center;">
+                <input type="checkbox" id="toggle-mask" style="margin-right: 0.4em;">
+                <span>Enable Mask</span>
+            </label>
+        </form>
+        <input type="text" id="genre-search" placeholder="Search for a genre...">
+        <button id="search-button">Search</button>
+    </div>
+
     <script src="d3.js"></script>
 </body>
 </html>
