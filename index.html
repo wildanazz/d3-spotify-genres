@@ -3,7 +3,7 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>ENAO</title>
+    <title>ENAO - Every Spotify Genre</title>
     <script src="https://d3js.org/d3.v7.min.js"></script>
     <style>
         /* Basic Reset and Full Screen Layout */
@@ -36,6 +36,16 @@
             font-size: 24px;
             font-weight: bold;
             color: #333;
+        }
+
+        /* "Made with love" styling */
+        #credit {
+            position: absolute;
+            top: 40px; /* Adjusted for spacing under the title */
+            left: 10px;
+            font-size: 14px;
+            color: #888;
+            font-style: italic;
         }
 
         /* Tooltip styling */
@@ -114,6 +124,7 @@
 </head>
 <body>
     <div id="title">6292 Spotify Genres</div>
+    <div id="credit">Made with ❤︎ by wildanazz</div>
     <div id="scatterplot"></div>
     <div class="tooltip" id="tooltip"></div>
     
