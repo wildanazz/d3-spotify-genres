@@ -1,6 +1,5 @@
 // Function to update chart dimensions and redraw the chart
 function updateChartDimensions() {
-    // Update width and height based on window size
     const margin = { top: 20, right: 40, bottom: 60, left: 80 };
     const width = window.innerWidth - margin.left - margin.right;
     const height = window.innerHeight - margin.top - margin.bottom;
@@ -16,16 +15,7 @@ function updateChartDimensions() {
         .attr("transform", `translate(${margin.left},${margin.top})`);
 
     // Set up tooltip
-    const tooltip = d3.select("body").append("div")
-        .attr("id", "tooltip")
-        .style("position", "absolute")
-        .style("visibility", "hidden")
-        .style("background-color", "#f9f9f9")
-        .style("border", "1px solid #ccc")
-        .style("border-radius", "5px")
-        .style("padding", "10px")
-        .style("box-shadow", "0px 0px 10px rgba(0, 0, 0, 0.1)")
-        .style("pointer-events", "none");
+    const tooltip = d3.select("#tooltip");
 
     // Create audio element for preview
     const audio = new Audio();
@@ -51,20 +41,32 @@ function updateChartDimensions() {
 
         const y = d3.scaleLinear()
             .domain([d3.min(data, d => d.top_pixel) - 10, d3.max(data, d => d.top_pixel) + 10])
-            .range([0, height]);  // Inverted range for y-axis
+            .range([0, height]);
 
         // Scale font_size to circle radius
         const radius = d3.scaleSqrt()
             .domain([d3.min(data, d => d.font_size), d3.max(data, d => d.font_size)])
-            .range([4, 16]);  // Circle sizes
+            .range([4, 16]);
+
+        const density = d3.contourDensity()
+            .x(d => x(d.left_pixel))
+            .y(d => y(d.top_pixel))
+            .size([width, height])
+            .thresholds(30)
+            .bandwidth(40);
+
+        // Create color scale for contours
+        const color = d3.scaleLinear()
+            .domain(d3.extent(density(data), d => d.value))
+            .range(["#06D6A0", "#EF476F"]);
 
         // Draw the chart
-        function drawChart() {
+        function drawChart(w_masks) {
             // Clear previous chart elements
             svg.selectAll("*").remove();
 
             // Create circles for scatter plot
-            const circles = svg.append("g")
+            svg.append("g")
                 .selectAll(".dot")
                 .data(data)
                 .enter().append("circle")
@@ -74,69 +76,91 @@ function updateChartDimensions() {
                 .attr("r", d => radius(d.font_size))
                 .attr("fill", d => d.color)
                 .on("mouseover", function(event, d) {
-                    // Display dynamic tooltip content
                     tooltip.style("visibility", "visible")
-                        .html(`
-                            <strong>Genre:</strong> ${d.genre_name}<br>
-                        `)
+                        .html(`Genre: ${d.genre_name}`)
                         .style("top", `${event.pageY + 5}px`)
                         .style("left", `${event.pageX + 5}px`)
                         .style("background-color", d.color);
                 })
                 .on("mouseout", () => tooltip.style("visibility", "hidden"))
                 .on("click", function(event, d) {
-                    // Handle dot click events
                     if (selectedDot === d) {
-                        audio.pause();  // Stop audio if same dot is clicked again
-                        selectedDot = null;  // Reset selected dot
-                        d3.select(this).classed("selected", false);  // Remove selection
+                        audio.pause();
+                        selectedDot = null;
+                        d3.select(this).classed("selected", false);
                     } else {
                         if (d.preview_url) {
-                            audio.src = d.preview_url;  // Set audio source
-                            audio.play();  // Play the audio
+                            audio.src = d.preview_url;
+                            audio.play();
                         }
-                        selectedDot = d;  // Update selected dot
-                        d3.selectAll(".dot").classed("selected", false);  // Remove selection from all dots
-                        d3.select(this).classed("selected", true);  // Mark current dot as selected
+                        selectedDot = d;
+                        d3.selectAll(".dot").classed("selected", false);
+                        d3.select(this).classed("selected", true);
                     }
                 });
 
-            // Add x-axis without lines, ticks, and numbers
-            const xAxis = d3.axisBottom(x).ticks(5).tickSize(0).tickFormat(() => "");
-            svg.append("g")
-                .attr("class", "x axis")
-                .attr("transform", `translate(0, ${height})`)
-                .call(xAxis)
-                .selectAll(".domain")  // Remove the axis line
-                .remove();
+            // Generate contours
+            const contours = density(data);
 
-            // Add x-axis label
-            svg.append("text")
-                .attr("class", "axis-label")
-                .attr("x", width / 2)
-                .attr("y", height + margin.bottom - 10)
-                .style("text-anchor", "middle")
-                .text("← Denser & Atmospheric, Spikier & Bouncier →");
+            // Create contour paths with optional clipping mask
+            if (w_masks) {
+                svg.append("g")
+                    .selectAll(".contour")
+                    .data(contours)
+                    .enter().append("path")
+                    .attr("class", "contour")
+                    .attr("d", d3.geoPath())
+                    .attr("stroke-width", 2)
+                    .attr("stroke", d => color(d.value))
+                    .attr("stroke-linejoin", "round")
+                    .style("fill", d => color(d.value).replace(")", ", 0.3)"));
+            }
 
-            // Add y-axis without lines, ticks, and numbers
-            const yAxis = d3.axisLeft(y).ticks(5).tickSize(0).tickFormat(() => "");
-            svg.append("g")
-                .attr("class", "y axis")
-                .call(yAxis)
-                .selectAll(".domain")  // Remove the axis line
-                .remove();
+            // Add x-axis without lines, ticks, and numbers, only if mask is off
+            if (!w_masks) {
+                const xAxis = d3.axisBottom(x).ticks(5).tickSize(0).tickFormat(() => "");
+                svg.append("g")
+                    .attr("class", "x axis")
+                    .attr("transform", `translate(0, ${height})`)
+                    .call(xAxis)
+                    .selectAll(".domain").remove();
 
-            // Add y-axis label
-            svg.append("text")
-                .attr("class", "axis-label")
-                .attr("transform", "rotate(-90)")
-                .attr("x", -height / 2)
-                .attr("y", -margin.left + 20)
-                .style("text-anchor", "middle")
-                .text("← Organic, Mechanical & Electric →");
+                // Add x-axis label
+                svg.append("text")
+                    .attr("class", "axis-label")
+                    .attr("x", width / 2)
+                    .attr("y", height + margin.bottom - 10)
+                    .style("text-anchor", "middle")
+                    .text("← Denser & Atmospheric, Spikier & Bouncier →");
+            }
+
+            // Add y-axis without lines, ticks, and numbers, only if mask is off
+            if (!w_masks) {
+                const yAxis = d3.axisLeft(y).ticks(5).tickSize(0).tickFormat(() => "");
+                svg.append("g")
+                    .attr("class", "y axis")
+                    .call(yAxis)
+                    .selectAll(".domain").remove();
+
+                // Add y-axis label
+                svg.append("text")
+                    .attr("class", "axis-label")
+                    .attr("transform", "rotate(-90)")
+                    .attr("x", -height / 2)
+                    .attr("y", -margin.left + 20)
+                    .style("text-anchor", "middle")
+                    .text("← Organic, Mechanical & Electric →");
+            }
         }
 
-        drawChart();
+        // Event listener for the mask toggle
+        const maskToggle = document.getElementById("toggle-mask");
+        maskToggle.addEventListener("change", (event) => {
+            drawChart(event.target.checked);
+        });
+
+        // Initial chart render with mask enabled
+        drawChart(maskToggle.checked);
     });
 }
 
