@@ -61,6 +61,7 @@ function updateChartDimensions() {
             .range(["#06D6A0", "#EF476F"]);
 
         // Draw the chart
+        // Draw the chart with smooth transition for search result
         function drawChart(w_masks, searchTerm = "") {
             // Clear previous chart elements
             svg.selectAll("*").remove();
@@ -68,7 +69,7 @@ function updateChartDimensions() {
             // Filter data based on search term
             const filteredData = searchTerm ? data.filter(d => d.genre_name.toLowerCase().includes(searchTerm.toLowerCase())) : data;
 
-            // Create circles for scatter plot
+            // Create circles for scatter plot with a transition
             const dots = svg.append("g")
                 .selectAll(".dot")
                 .data(filteredData)
@@ -76,7 +77,7 @@ function updateChartDimensions() {
                 .attr("class", "dot")
                 .attr("cx", d => x(d.left_pixel))
                 .attr("cy", d => y(d.top_pixel))
-                .attr("r", d => radius(d.font_size))
+                .attr("r", 0)  // Initially set radius to 0 for transition effect
                 .attr("fill", d => d.color)
                 .attr("opacity", 0.7)
                 .on("mouseover", function(event, d) {
@@ -102,6 +103,11 @@ function updateChartDimensions() {
                         d3.select(this).classed("selected", true);
                     }
                 });
+
+            // Apply smooth transition for the radius and opacity
+            dots.transition()
+                .duration(500)  // Transition duration (500ms)
+                .attr("r", d => radius(d.font_size));  // Transition to actual radius
 
             // Generate contours
             const contours = density(filteredData);
