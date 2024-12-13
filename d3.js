@@ -141,6 +141,9 @@ function updateChartDimensions() {
                     .attr("x", width / 2)
                     .attr("y", height + margin.bottom - 10)
                     .style("text-anchor", "middle")
+                    .style("font-family", "Arial, sans-serif")  // Set font
+                    .style("font-weight", "bold")  // Bold font
+                    .style("font-size", "16px")  // Adjust font size
                     .text("← Denser & Atmospheric, Spikier & Bouncier →");
             }
 
@@ -159,6 +162,9 @@ function updateChartDimensions() {
                     .attr("x", -height / 2)
                     .attr("y", -margin.left + 20)
                     .style("text-anchor", "middle")
+                    .style("font-family", "Arial, sans-serif")  // Set font
+                    .style("font-weight", "bold")  // Bold font
+                    .style("font-size", "16px")  // Adjust font size
                     .text("← Organic, Mechanical & Electric →");
             }
         }
