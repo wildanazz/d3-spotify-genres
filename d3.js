@@ -78,6 +78,7 @@ function updateChartDimensions() {
                 .attr("cy", d => y(d.top_pixel))
                 .attr("r", d => radius(d.font_size))
                 .attr("fill", d => d.color)
+                .attr("opacity", 0.7)
                 .on("mouseover", function(event, d) {
                     tooltip.style("visibility", "visible")
                         .html(`Genre: ${d.genre_name}`)
@@ -162,19 +163,20 @@ function updateChartDimensions() {
             drawChart(event.target.checked, document.getElementById("genre-search").value);
         });
 
-        // Event listener for search button
-        const searchButton = document.getElementById("search-button");
-        searchButton.addEventListener("click", () => {
-            const searchTerm = document.getElementById("genre-search").value;
-            drawChart(maskToggle.checked, searchTerm);
+        // Debounced search functionality
+        let debounceTimeout;
+        document.getElementById("genre-search").addEventListener("input", () => {
+            clearTimeout(debounceTimeout);
+            debounceTimeout = setTimeout(() => {
+                const searchTerm = document.getElementById("genre-search").value;
+                drawChart(maskToggle.checked, searchTerm);
+            }, 300); // 300ms delay before triggering search
         });
 
-        // Event listener for pressing Enter key in search field
-        document.getElementById("genre-search").addEventListener("keydown", (event) => {
-            if (event.key === "Enter") {
-                const searchTerm = event.target.value;
-                drawChart(maskToggle.checked, searchTerm);
-            }
+        // Clear button functionality
+        document.getElementById("clear-button").addEventListener("click", () => {
+            document.getElementById("genre-search").value = '';
+            drawChart(maskToggle.checked);
         });
 
         // Initial chart render with mask enabled
