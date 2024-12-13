@@ -52,6 +52,37 @@
             stroke: #ff4500;
             stroke-width: 3;
         }
+
+        /* Responsive styling */
+        @media (max-width: 768px) {
+            body {
+                padding: 10px;
+            }
+
+            .tooltip {
+                font-size: 12px;
+                padding: 6px;
+            }
+
+            .dot {
+                r: 5;
+            }
+        }
+
+        @media (max-width: 480px) {
+            .tooltip {
+                font-size: 10px;
+                padding: 5px;
+            }
+
+            .dot {
+                r: 4;
+            }
+
+            #scatterplot {
+                height: 80vh; /* Reduce height on very small screens */
+            }
+        }
     </style>
 </head>
 <body>
