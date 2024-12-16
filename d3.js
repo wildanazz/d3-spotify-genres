@@ -77,7 +77,7 @@ function updateChartDimensions() {
                 .attr("class", "dot")
                 .attr("cx", d => x(d.left_pixel))
                 .attr("cy", d => y(d.top_pixel))
-                .attr("r", 0)  // Initially set radius to 0 for transition effect
+                .attr("r", d => radius(d.font_size))  // Initially set radius to 0 for transition effect
                 .attr("fill", d => d.color)
                 .attr("opacity", 0.7)
                 .on("mouseover", function(event, d) {
@@ -105,9 +105,9 @@ function updateChartDimensions() {
                 });
 
             // Apply smooth transition for the radius and opacity
-            dots.transition()
-                .duration(500)  // Transition duration (500ms)
-                .attr("r", d => radius(d.font_size));  // Transition to actual radius
+            // dots.transition()
+            //     .duration(500)  // Transition duration (500ms)
+            //     .attr("r", d => radius(d.font_size));  // Transition to actual radius
 
             // Generate contours
             const contours = density(filteredData);
