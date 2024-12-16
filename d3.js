@@ -123,7 +123,7 @@ function updateChartDimensions() {
                     .attr("stroke-width", 2)
                     .attr("stroke", d => color(d.value))
                     .attr("stroke-linejoin", "round")
-                    .style("fill", d => color(d.value).replace(")", ", 0.3)"));
+                    .style("fill", d => color(d.value).replace(")", ", 0.025)"));
             }
 
             // Add x-axis without lines, ticks, and numbers, only if mask is off
