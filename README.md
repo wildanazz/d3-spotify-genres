@@ -1,4 +1,5 @@
 # d3-spotify-genres
+Visualizing every spotify genre using d3.
 ## TODO
 * Optimize performance (e.g. efficient plot redrawing).
 * Add more plot interactivity.
