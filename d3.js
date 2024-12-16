@@ -125,48 +125,43 @@ function updateChartDimensions() {
                     .attr("stroke-linejoin", "round")
                     .style("fill", d => color(d.value).replace(")", ", 0.025)"));
             }
+     
+            const xAxis = d3.axisBottom(x).ticks(5).tickSize(0).tickFormat(() => "");
+            svg.append("g")
+                .attr("class", "x axis")
+                .attr("transform", `translate(0, ${height})`)
+                .call(xAxis)
+                .selectAll(".domain").remove();
 
-            // Add x-axis without lines, ticks, and numbers, only if mask is off
-            if (!w_masks) {
-                const xAxis = d3.axisBottom(x).ticks(5).tickSize(0).tickFormat(() => "");
-                svg.append("g")
-                    .attr("class", "x axis")
-                    .attr("transform", `translate(0, ${height})`)
-                    .call(xAxis)
-                    .selectAll(".domain").remove();
+            // Add x-axis label
+            svg.append("text")
+                .attr("class", "axis-label")
+                .attr("x", width / 2)
+                .attr("y", height + margin.bottom - 10)
+                .style("text-anchor", "middle")
+                .style("font-family", "Arial, sans-serif")  // Set font
+                .style("font-weight", "bold")  // Bold font
+                .style("font-size", "16px")  // Adjust font size
+                .text("← Denser & Atmospheric, Spikier & Bouncier →");
+            
+            const yAxis = d3.axisLeft(y).ticks(5).tickSize(0).tickFormat(() => "");
+            svg.append("g")
+                .attr("class", "y axis")
+                .call(yAxis)
+                .selectAll(".domain").remove();
 
-                // Add x-axis label
-                svg.append("text")
-                    .attr("class", "axis-label")
-                    .attr("x", width / 2)
-                    .attr("y", height + margin.bottom - 10)
-                    .style("text-anchor", "middle")
-                    .style("font-family", "Arial, sans-serif")  // Set font
-                    .style("font-weight", "bold")  // Bold font
-                    .style("font-size", "16px")  // Adjust font size
-                    .text("← Denser & Atmospheric, Spikier & Bouncier →");
-            }
-
-            // Add y-axis without lines, ticks, and numbers, only if mask is off
-            if (!w_masks) {
-                const yAxis = d3.axisLeft(y).ticks(5).tickSize(0).tickFormat(() => "");
-                svg.append("g")
-                    .attr("class", "y axis")
-                    .call(yAxis)
-                    .selectAll(".domain").remove();
-
-                // Add y-axis label
-                svg.append("text")
-                    .attr("class", "axis-label")
-                    .attr("transform", "rotate(-90)")
-                    .attr("x", -height / 2)
-                    .attr("y", -margin.left + 20)
-                    .style("text-anchor", "middle")
-                    .style("font-family", "Arial, sans-serif")  // Set font
-                    .style("font-weight", "bold")  // Bold font
-                    .style("font-size", "16px")  // Adjust font size
-                    .text("← Organic, Mechanical & Electric →");
-            }
+            // Add y-axis label
+            svg.append("text")
+                .attr("class", "axis-label")
+                .attr("transform", "rotate(-90)")
+                .attr("x", -height / 2)
+                .attr("y", -margin.left + 20)
+                .style("text-anchor", "middle")
+                .style("font-family", "Arial, sans-serif")  // Set font
+                .style("font-weight", "bold")  // Bold font
+                .style("font-size", "16px")  // Adjust font size
+                .text("← Organic, Mechanical & Electric →");
+            
         }
 
         // Event listener for the mask toggle
