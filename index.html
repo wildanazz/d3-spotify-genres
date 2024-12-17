@@ -85,9 +85,8 @@
         /* Container for the search and toggle */
         #controls {
             position: absolute;
-            top: 10px;
-            left: 50%;
-            transform: translateX(-50%);
+            top: 10px; /* Positioning at the top of the screen */
+            left: 10px; /* Positioning at the left of the screen */
             display: flex;
             align-items: center;
             gap: 1em;
@@ -131,6 +130,28 @@
             margin: 0;
             font-style: italic;
             user-select: none; /* Prevent text selection */
+        }
+
+        /* Spotify login button styling */
+        #spotify-login-btn {
+            position: absolute;
+            top: 80px;
+            left: 10px;
+            background-color: #1DB954;
+            color: white;
+            border: none;
+            padding: 10px 20px;
+            font-size: 14px;
+            font-weight: bold;
+            border-radius: 20px;
+            cursor: pointer;
+            transition: background-color 0.3s ease;
+            z-index: 2;
+            user-select: none;
+        }
+
+        #spotify-login-btn:hover {
+            background-color: #1ed760;
         }
     
         /* Responsive styling */
@@ -194,15 +215,14 @@
     </style>
 </head>
 <body>
-    <div id="title">6292 Spotify Genres</div>
-    <div id="credit">Made with ❤︎ by wildanazz</div>
+    <div id="spotify-login-btn" onclick="loginToSpotify()">Access your Spotify genres</div>
     <div id="scatterplot"></div>
     <div class="tooltip" id="tooltip"></div>
     
     <div id="controls">
         <form>
             <label style="display: flex; align-items: center;">
-                <input type="checkbox" id="toggle-mask" style="margin-right: 0.4em;">
+                <input type="checkbox" id="toggle-mask" style="margin-right: 0.4em;" checked>
                 <span>Enable Mask</span>
             </label>
         </form>
