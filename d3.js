@@ -64,8 +64,9 @@ function updateChartDimensions() {
 
         // Create scatter plot circles (only once)
         function createScatterPlot(filteredData) {
-            // Clear existing circles
+            // Clear existing circles and labels
             svg.selectAll(".dot").remove();
+            svg.selectAll(".label").remove();
 
             // Create new circles based on filtered data
             const dots = svg.append("g")
@@ -101,6 +102,33 @@ function updateChartDimensions() {
                         d3.select(this).classed("selected", true);
                     }
                 });
+            
+            const genresToLabel = ['metal', 'pop rock', 'rock', 'funk', 'jazz', 'rap', 'pop', 'folk', 'focus', 'classical', 'techno'];
+            const labelData = filteredData.filter(d => genresToLabel.includes(d.genre_name.toLowerCase()));
+            
+            // Function to capitalize the first letter of each word in a string
+            function capitalizeWords(str) {
+                return str.replace(/\b\w/g, char => char.toUpperCase());
+            }
+            
+            // Create labels for each genre
+            svg.append("g")
+                .selectAll(".label")
+                .data(labelData)
+                .enter().append("text")
+                .attr("class", "label")
+                .attr("x", d => x(d.left_pixel))
+                .attr("y", d => y(d.top_pixel))
+                .attr("dy", -20)  // Adjust vertical position to avoid overlap with the circle
+                .attr("text-anchor", "middle")
+                .style("font-size", "25px")  // Adjust font size
+                .style("font-family", "Arial, sans-serif")
+                .style("fill", "#000000")  // White text color for contrast
+                .style("font-weight", "bold")  // Make the text bold for better visibility
+                .style("stroke", "#000000")  // Add black outline to improve visibility on dark backgrounds
+                .style("stroke-width", 0.5)  // Thickness of the outline
+                .style("text-shadow", "1px 1px 2px rgba(0,0,0,0.5)")  // Add text shadow for better readability
+                .text(d => capitalizeWords(d.genre_name.toLowerCase()));
         }
 
         // Contour update logic
