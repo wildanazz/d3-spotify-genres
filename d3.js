@@ -10,8 +10,10 @@ function updateChartDimensions() {
     // Append new SVG with updated dimensions
     const svg = d3.select("#scatterplot").append("svg")
         .attr("width", width + margin.left + margin.right)
-        .attr("height", height + margin.top + margin.bottom)
-        .append("g")
+        .attr("height", height + margin.top + margin.bottom);
+
+    // Create a group for the chart content (scatter plot circles, labels, axes, etc.)
+    const chartGroup = svg.append("g")
         .attr("transform", `translate(${margin.left},${margin.top})`);
 
     // Set up tooltip (moving outside of event handlers for better performance)
@@ -65,11 +67,11 @@ function updateChartDimensions() {
         // Create scatter plot circles (only once)
         function createScatterPlot(filteredData) {
             // Clear existing circles and labels
-            svg.selectAll(".dot").remove();
-            svg.selectAll(".label").remove();
+            chartGroup.selectAll(".dot").remove();
+            chartGroup.selectAll(".label").remove();
 
             // Create new circles based on filtered data
-            const dots = svg.append("g")
+            const dots = chartGroup.append("g")
                 .selectAll(".dot")
                 .data(filteredData)
                 .enter().append("circle")
@@ -102,17 +104,17 @@ function updateChartDimensions() {
                         d3.select(this).classed("selected", true);
                     }
                 });
-            
+
             const genresToLabel = ['metal', 'pop rock', 'rock', 'funk', 'jazz', 'rap', 'pop', 'folk', 'focus', 'classical', 'techno'];
             const labelData = filteredData.filter(d => genresToLabel.includes(d.genre_name.toLowerCase()));
-            
+
             // Function to capitalize the first letter of each word in a string
             function capitalizeWords(str) {
                 return str.replace(/\b\w/g, char => char.toUpperCase());
             }
-            
+
             // Create labels for each genre
-            svg.append("g")
+            chartGroup.append("g")
                 .selectAll(".label")
                 .data(labelData)
                 .enter().append("text")
@@ -134,7 +136,7 @@ function updateChartDimensions() {
         // Contour update logic
         function updateContours(filteredData) {
             // Clear existing contours
-            svg.selectAll(".contour").remove();
+            chartGroup.selectAll(".contour").remove();
 
             // Set up the contour density function with dynamic bandwidth
             const density = d3.contourDensity()
@@ -148,7 +150,7 @@ function updateChartDimensions() {
             const contours = density(filteredData);
 
             // Create contour paths with transition for smooth updates
-            const contourGroup = svg.append("g").attr("class", "contour-group");
+            const contourGroup = chartGroup.append("g").attr("class", "contour-group");
 
             contourGroup.selectAll(".contour")
                 .data(contours)
@@ -198,7 +200,7 @@ function updateChartDimensions() {
             if (maskToggle.checked) {
                 updateContours(filteredData);  // Show contours based on filtered data
             } else {
-                svg.selectAll(".contour").remove();  // Hide contours
+                chartGroup.selectAll(".contour").remove();  // Hide contours
             }
         });
 
@@ -213,7 +215,7 @@ function updateChartDimensions() {
 
         // Helper function to create axes
         function createAxis(axis, orientation, transform) {
-            svg.append("g")
+            chartGroup.append("g")
                 .attr("class", `${orientation}-axis`)
                 .attr("transform", transform)
                 .call(axis)
@@ -230,7 +232,6 @@ function updateChartDimensions() {
             if (maskToggle.checked) {
                 updateContours(filteredData);
             }
-            
         });
 
         // Create x-axis and y-axis
@@ -241,7 +242,7 @@ function updateChartDimensions() {
         createAxis(yAxis, 'y', "");
 
         // Add axis labels
-        svg.append("text")
+        chartGroup.append("text")
             .attr("class", "axis-label")
             .attr("x", width / 2)
             .attr("y", height + margin.bottom - 10)
@@ -251,7 +252,7 @@ function updateChartDimensions() {
             .style("font-size", "16px")
             .text("← Denser & Atmospheric, Spikier & Bouncier →");
 
-        svg.append("text")
+        chartGroup.append("text")
             .attr("class", "axis-label")
             .attr("transform", "rotate(-90)")
             .attr("x", -height / 2)
@@ -261,6 +262,28 @@ function updateChartDimensions() {
             .style("font-weight", "bold")
             .style("font-size", "16px")
             .text("← Organic, Mechanical & Electric →");
+
+        // Add zoom behavior
+        const zoom = d3.zoom()
+            .scaleExtent([0.5, 10])  // Set zoom limits
+            .on("zoom", (event) => {
+                chartGroup.attr("transform", event.transform);
+            });
+
+        // Function to lock/unlock zoom
+        let isZoomLocked = true;
+        function toggleZoom() {
+            isZoomLocked = !isZoomLocked;
+            if (isZoomLocked) {
+                svg.on(".zoom", null);  // Disable zoom
+            } else {
+                svg.call(zoom);  // Enable zoom
+            }
+        }
+
+        // Add a button to lock/unlock zoom
+        const zoomButton = d3.select("#zoom-toggle").on("click", toggleZoom);
+        svg.on(".zoom", null);
     });
 }
 
