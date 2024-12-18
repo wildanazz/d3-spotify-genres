@@ -144,7 +144,7 @@ function updateChartDimensions() {
                 .y(d => y(d.top_pixel))
                 .size([width, height])
                 .thresholds(30)  // Adjust this value to fine-tune the contour density
-                .bandwidth(40);  // Adjust for smoother or more detailed contours
+                .bandwidth(20);  // Adjust for smoother or more detailed contours
 
             // Generate contours based on filtered data
             const contours = density(filteredData);
