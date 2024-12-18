@@ -177,7 +177,8 @@
             /* Adjust controls layout for mobile */
             #controls {
                 flex-direction: column; /* Stack controls vertically */
-                align-items: flex-start; /* Align items to the start */
+                align-items: center; /* Align items to the start */
+                justify-content: center; /* Align items vertically in the center */
                 gap: 10px;
                 padding: 15px;
                 white-space: normal; /* Allow wrapping of text */
@@ -187,13 +188,13 @@
             #genre-search {
                 width: 100%;
                 min-width: unset; /* Allow input to take full width */
-                max-width: 90px;
+                max-width: 100px;
             }
 
             /* Adjust button widths for mobile */
             #clear-button, #spotify-login-btn {
                 width: 100%;
-                max-width: 90px; /* Limit max width */
+                max-width: 100px; /* Limit max width */
             }
         }
     </style>
