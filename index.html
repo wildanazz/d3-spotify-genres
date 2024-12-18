@@ -5,6 +5,7 @@
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
     <title>Every Noise at Once - Spotify Genres</title>
     <link rel="icon" href="images/favicon.ico" type="image/x-icon">
+    <link href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.0.0-beta3/css/all.min.css" rel="stylesheet">
     <script src="https://d3js.org/d3.v7.min.js"></script>
     <style>
         /* Basic Reset and Full Screen Layout */
@@ -99,6 +100,8 @@
             box-shadow: 0 0 10px rgba(0, 0, 0, 0.2);
             z-index: 1;
             user-select: none; /* Prevent text selection in controls */
+            white-space: nowrap;
+            flex-wrap: wrap; /* Allow wrapping of controls */
         }
     
         /* Styling for the search input and button */
@@ -108,6 +111,7 @@
             border-radius: 5px;
             border: 1px solid #ccc;
             width: 150px;
+            min-width: 120px; /* Allow flexibility in input width */
         }
     
         #clear-button {
@@ -135,9 +139,9 @@
 
         /* Spotify login button styling */
         #spotify-login-btn {
-            position: absolute;
-            top: 80px;
-            left: 10px;
+            display: flex;
+            align-items: center;
+            justify-content: center;
             background-color: #1DB954;
             color: white;
             border: none;
@@ -154,73 +158,50 @@
         #spotify-login-btn:hover {
             background-color: #1ed760;
         }
-    
-        /* Responsive styling */
-        @media (max-width: 768px) {
-            body {
-                padding: 10px;
-            }
-    
-            .tooltip {
-                font-size: 12px;
-                padding: 6px;
-            }
-    
-            .dot {
-                r: 5;
-            }
-    
-            #controls {
-                padding: 8px;
-                gap: 0.8em;
-            }
-    
-            #genre-search {
-                width: 200px;
-            }
+
+        /* Spotify icon styling */
+        #spotify-login-btn i {
+            margin-right: 8px; /* Space between icon and text */
         }
-    
+
+        /* Media query to hide the text on small screens */
         @media (max-width: 480px) {
-            body {
-                padding: 5px;
+            #spotify-login-btn span { /* Hide the text */
+                display: none;
             }
-    
-            #scatterplot {
-                height: 70vh; /* Reduce the plot height */
+
+            #spotify-login-btn i { /* Ensure icon is visible */
+                margin-right: 0; /* Optional: adjust spacing if needed */
             }
-    
-            .tooltip {
-                font-size: 10px;
-                padding: 5px;
-            }
-    
-            .dot {
-                r: 4;
-            }
-    
+
+            /* Adjust controls layout for mobile */
             #controls {
-                flex-direction: column;
-                align-items: flex-start;
-                gap: 0.5em;
-                width: 100%; /* Ensure controls fit screen width */
+                flex-direction: column; /* Stack controls vertically */
+                align-items: flex-start; /* Align items to the start */
+                gap: 10px;
+                padding: 15px;
+                white-space: normal; /* Allow wrapping of text */
             }
-    
+
+            /* Adjust input field size */
             #genre-search {
-                width: 100%; /* Make search input full width */
+                width: 100%;
+                min-width: unset; /* Allow input to take full width */
             }
-    
-            #clear-button {
-                width: 100%; /* Make button full width */
+
+            /* Adjust button widths for mobile */
+            #clear-button, #spotify-login-btn {
+                width: 100%;
+                max-width: 200px; /* Limit max width */
             }
         }
     </style>
 </head>
 <body>
-    <div id="spotify-login-btn" onclick="loginToSpotify()">Analyse your Spotify genres</div>
-    <div id="scatterplot"></div>
-    <div class="tooltip" id="tooltip"></div>
-    
     <div id="controls">
+        <div id="spotify-login-btn" onclick="loginToSpotify()">
+            <i class="fab fa-spotify"></i> <span>Analyse your Spotify genres</span>
+        </div>
         <form>
             <label style="display: flex; align-items: center;">
                 <input type="checkbox" id="toggle-mask" style="margin-right: 0.4em;" checked>
@@ -228,10 +209,12 @@
             </label>
         </form>
         <input type="text" id="genre-search" placeholder="Search for a genre..." autocomplete="off">
-        <button id="clear-button">Clear</button>
+        <button id="clear-button">Clear</button> 
         <p id="audio-note">Tap dot for audio preview</p>
     </div>
 
+    <div id="scatterplot"></div>
+    <div class="tooltip" id="tooltip"></div>
     <script src="d3.js"></script>
 </body>
 </html>
