@@ -83,7 +83,11 @@ function updateChartDimensions() {
                 .attr("opacity", 0.7)
                 .on("mouseover", function(event, d) {
                     tooltip.style("visibility", "visible")
-                        .html(`Genre: ${d.genre_name}`)
+                        .html(`
+                            <strong>Genre Description ♫</strong><br>
+                            <strong>Name:</strong> ${d.genre_name}<br>
+                            <strong>Preview Track: </strong> ${d.preview_track}
+                        `)
                         .style("top", `${event.pageY + 5}px`)
                         .style("left", `${event.pageX + 5}px`)
                         .style("background-color", d.color);
