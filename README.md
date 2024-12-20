@@ -34,7 +34,7 @@ A live demo of the application is available [https://wildanazz.github.io/d3-spot
    python -m http.server
    ```
 
-3. Open your browser and navigate to `http://localhost:5000`.
+3. Open your browser and navigate to `http://localhost:8000`.
 
 ## Usage
 
