@@ -51,8 +51,6 @@ A live demo of the application is available [https://wildanazz.github.io/d3-spot
 ## Todo
 
 - Optimize performance (e.g. efficient plot redrawing).
-- Add more plot interactivity.
-- Add a mask for music taste based on the user's Spotify.
 
 ## Acknowledgements
 
