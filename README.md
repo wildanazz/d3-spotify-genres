@@ -1,6 +1,8 @@
 # D3 Spotify Genres
 
-A web-based visualization tool that uses D3.js to showcase your Spotify listening history by analyzing and categorizing your favorite music genres. 
+A web-based visualization tool that uses D3.js to showcase your Spotify listening history by analyzing and categorizing your favorite music genres.
+
+![Spotify Genres](./data/image.png)
 
 ## Features
 
@@ -32,7 +34,7 @@ A live demo of the application is available [https://wildanazz.github.io/d3-spot
    python -m http.server
    ```
 
-3. Open your browser and navigate to `http://localhost:5000`.
+3. Open your browser and navigate to `http://localhost:8000`.
 
 ## Usage
 
@@ -49,11 +51,10 @@ A live demo of the application is available [https://wildanazz.github.io/d3-spot
 ## Todo
 
 - Optimize performance (e.g. efficient plot redrawing).
-- Add more plot interactivity.
-- Add a mask for music taste based on the user's Spotify.
 
 ## Acknowledgements
 
-- [Genre Map Explorer for Spotify](https://observablehq.com/@mjbo/genre-map-explorer-for-spotify)
-- [Spotify Web API](https://developer.spotify.com/documentation/web-api/)
-- [D3.js](https://d3js.org/)
+- Special thanks to [Genre Map Explorer for Spotify](https://github.com/username/repository) for the inspiration behind this project. Max's work provided great insights and ideas that helped shape this project.
+- This project uses the music genre data and visualizations from [Every Noise at Once](https://everynoise.com/), a comprehensive resource that categorizes and maps musical genres created by Stephen R.
+- [Spotify Web API](https://developer.spotify.com/documentation/web-api/) for providing access to spotify music data.
+- [D3.js](https://d3js.org/) for creating dynamic and interactive visualizations in this project.
