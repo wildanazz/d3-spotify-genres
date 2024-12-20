@@ -56,6 +56,6 @@ A live demo of the application is available [https://wildanazz.github.io/d3-spot
 
 ## Acknowledgements
 
-- [Genre Map Explorer for Spotify](https://observablehq.com/@mjbo/genre-map-explorer-for-spotify)
+- Special thanks to [Genre Map Explorer for Spotify](https://github.com/username/repository) for the inspiration behind this project. His work provided great insights and ideas that helped shape this project.
 - [Spotify Web API](https://developer.spotify.com/documentation/web-api/)
 - [D3.js](https://d3js.org/)
