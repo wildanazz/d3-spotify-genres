@@ -45,7 +45,7 @@ A live demo of the application is available [https://wildanazz.github.io/d3-spot
 ## Technologies Used
 
 - **Frontend**: D3.js, HTML, CSS, JavaScript
-- **Backend**: Node.js, Express
+- **Backend**: Python, Flask
 - **API**: Spotify Web API
 
 ## Todo
