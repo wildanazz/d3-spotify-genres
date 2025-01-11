@@ -42,7 +42,7 @@ function updateChartDimensions() {
             d.left_pixel = +d.left_pixel;
             d.font_size = +d.font_size;
             d.color = d.color || "#69b3a2"; // Default color if not specified
-            d.genre_name = d.genre_name || ""; // Ensure genre_name exists for filtering
+            d.genre_name = d.genre_name || "";
         });
 
         // Set scales for the scatter plot

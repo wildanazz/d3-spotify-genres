@@ -1,6 +1,6 @@
 # D3 Spotify Genres
 
-A web-based visualization tool that uses D3.js to showcase your Spotify listening history by analyzing and categorizing your favorite music genres.
+A web-based visualization tool that uses D3.js to showcase Spotify listening history by analyzing and categorizing favorite music genres.
 
 ![Spotify Genres](./data/image.png)
 
