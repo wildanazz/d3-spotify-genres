@@ -27,7 +27,7 @@ jobs:
     - name: Pull data from source repository
       run: |
         git checkout source_repo/main -- data/enao-genres.csv
-        git commit -m "Automated data sync from source-repo"
+        git commit -m "Automated data sync from enao-spotify-genres"
         git push origin main
 
     - name: Clean up
