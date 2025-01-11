@@ -293,7 +293,7 @@ function updateChartDimensions() {
 
 // Function to handle Spotify login redirect
 function loginToSpotify() {
-    window.location.href = 'https://spotify-genres-api-6462a6ecd0aa.herokuapp.com/login'; // Update with your backend URL
+    window.location.href = 'https://spotify-genres-api-6462a6ecd0aa.herokuapp.com/login';
 }
 
 // Function to extract genres from URL query params
