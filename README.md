@@ -36,12 +36,6 @@ A live demo of the application is available [https://wildanazz.github.io/d3-spot
 
 3. Open your browser and navigate to `http://localhost:8000`.
 
-## Usage
-
-1. Log in using your Spotify account.
-2. Allow the application to access your Spotify data.
-3. Explore the visualized genres based on your listening habits.
-
 ## Technologies Used
 
 - **Frontend**: D3.js, HTML, CSS, JavaScript
