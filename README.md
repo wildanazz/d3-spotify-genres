@@ -11,10 +11,6 @@ A web-based visualization tool that uses D3.js to showcase Spotify listening his
 - Provides insights into user listening preferences.
 - Easy-to-use interface for authentication and data exploration.
 
-## Demo
-
-A live demo of the application is available [https://wildanazz.github.io/d3-spotify-genres/](https://wildanazz.github.io/d3-spotify-genres/).
-
 ## Installation
 
 ### Prerequisites
