@@ -6,10 +6,6 @@ on:
 
   workflow_dispatch:
 
-  push:
-    branches:
-      - main
-
 jobs:
   pull_data:
     runs-on: ubuntu-latest
