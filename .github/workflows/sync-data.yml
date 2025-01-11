@@ -1,0 +1,39 @@
+name: Sync Data from Another Repo
+
+on:
+  schedule:
+    - cron: '0 1 * * *'
+
+  workflow_dispatch:
+
+  push:
+    branches:
+      - main
+
+jobs:
+  pull_data:
+    runs-on: ubuntu-latest
+
+    steps:
+    - name: Checkout target repo
+      uses: actions/checkout@v2
+      
+    - name: Set up Git
+      run: |
+        git config --global user.name "Muhammad Wildan Aziz"
+        git config --global user.email "wildanazzwa@gmail.com"
+
+    - name: Add source repository as remote
+      run: |
+        git remote add source_repo https://github.com/wildanazz/enao-spotify-genres.git
+        git fetch source_repo
+
+    - name: Pull data from source repository
+      run: |
+        git checkout source_repo/main -- data/enao-genres.csv
+        git commit -m "Automated data sync from source-repo"
+        git push origin main
+
+    - name: Clean up
+      run: |
+        git remote remove source_repo
