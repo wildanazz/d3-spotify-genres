@@ -269,7 +269,7 @@ function updateChartDimensions() {
 
         // Add zoom behavior
         const zoom = d3.zoom()
-            .scaleExtent([0.5, 10])  // Set zoom limits
+            .scaleExtent([1, 3])  // Set zoom limits
             .on("zoom", (event) => {
                 chartGroup.attr("transform", event.transform);
             });
