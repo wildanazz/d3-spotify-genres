@@ -1,0 +1,14 @@
+{
+  "name": "d3-spotify-genres",
+  "version": "1.0.0",
+  "description": "D3 visualization of Spotify genres with authentication",
+  "main": "server.js",
+  "scripts": {
+    "start": "node server.js"
+  },
+  "dependencies": {
+    "express": "^4.18.2",
+    "axios": "^1.6.2",
+    "cors": "^2.8.5"
+  }
+}
