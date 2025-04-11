@@ -291,9 +291,91 @@ function updateChartDimensions() {
     });
 }
 
-// Function to handle Spotify login redirect
+// Function to handle Spotify login redirect and token handling
+import { config } from './env.js';
+
 function loginToSpotify() {
-    window.location.href = 'https://spotify-genres-api-6462a6ecd0aa.herokuapp.com/login';
+    const { clientId, redirectUri, scope } = config.spotify;
+    const loginButton = document.getElementById('spotify-login-btn');
+
+    // Check if we already have a token in the URL hash
+    const hash = window.location.hash.substring(1);
+    const params = new URLSearchParams(hash);
+    const accessToken = params.get('access_token');
+
+    // If user clicks while logged in, log out
+    if (loginButton.innerHTML.includes('Log Out')) {
+        window.location.href = window.location.pathname;
+        return;
+    }
+
+    if (accessToken) {
+        // Clear the hash from the URL
+        window.location.hash = '';
+        // Use the token to get user data
+        fetch('https://api.spotify.com/v1/me', {
+            headers: {
+                'Authorization': `Bearer ${accessToken}`
+            }
+        })
+        .then(response => response.json())
+        .then(data => {
+            // Display user info
+            const userInfo = document.createElement('div');
+            userInfo.id = 'user-info';
+            userInfo.style.position = 'absolute';
+            userInfo.style.top = '10px';
+            userInfo.style.right = '10px';
+            userInfo.style.padding = '10px';
+            userInfo.style.backgroundColor = 'rgba(255, 255, 255, 0.9)';
+            userInfo.style.borderRadius = '5px';
+            userInfo.style.zIndex = '1000';
+            userInfo.innerHTML = `
+                <img src="${data.images?.[0]?.url || ''}" style="width: 50px; height: 50px; border-radius: 50%; margin-right: 10px;">
+                <strong>${data.display_name}</strong><br>
+                ${data.email || ''}
+            `;
+            document.body.appendChild(userInfo);
+
+            // Update login button to show logout
+            loginButton.innerHTML = '<i class="fab fa-spotify"></i> <span>Log Out</span>';
+
+            // After displaying user info, fetch top artists
+            return fetch('https://api.spotify.com/v1/me/top/artists?limit=50&time_range=medium_term', {
+                headers: {
+                    'Authorization': `Bearer ${accessToken}`
+                }
+            });
+        })
+        .then(response => response.json())
+        .then(topArtists => {
+            // Extract and process genres from top artists
+            const userGenres = new Set();
+            topArtists.items.forEach(artist => {
+                artist.genres.forEach(genre => userGenres.add(genre));
+            });
+
+            // Convert Set to Array and update URL with user's genres
+            const genresArray = Array.from(userGenres);
+            const searchParams = new URLSearchParams(window.location.search);
+            searchParams.set('genres', genresArray.join(','));
+            window.history.replaceState({}, '', `${window.location.pathname}?${searchParams}`);
+
+            // Trigger chart update
+            updateChartDimensions();
+        })
+        .catch(error => console.error('Error fetching data:', error));
+    } else {
+        // If no token, initiate login flow
+        const authParams = new URLSearchParams({
+            response_type: 'token',
+            client_id: clientId,
+            scope: scope,
+            redirect_uri: redirectUri
+        });
+
+        window.location.href = 'https://accounts.spotify.com/authorize?' + authParams.toString();
+    }
 }
 
 // Function to extract genres from URL query params
@@ -302,6 +384,9 @@ function getGenresFromUrl() {
     const genresString = urlParams.get('genres');
     return genresString ? genresString.split(',') : [];
 }
+
+// Add event listener for Spotify login button
+document.getElementById('spotify-login-btn').addEventListener('click', loginToSpotify);
 
 // Initial chart render
 updateChartDimensions();
